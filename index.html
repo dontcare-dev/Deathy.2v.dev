@@ -16,7 +16,6 @@
     --text: #f0f0f0;
     --muted: #777;
     --accent: #ffffff;
-    --glow: rgba(255,255,255,0.06);
   }
 
   body {
@@ -28,42 +27,23 @@
     justify-content: center;
     align-items: flex-start;
     padding: 40px 16px;
-    position: relative;
   }
 
-  /* ── REPEATING VIDEO BACKGROUND ── */
-  .video-bg-grid {
+  #bgVideo {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    grid-template-rows: repeat(auto-fill, minmax(300px, 1fr));
-    overflow: hidden;
-    pointer-events: none;
-  }
-  
-  .video-bg-grid video {
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.15;
-    mix-blend-mode: screen;
+    z-index: -2;
+    opacity: 1;
   }
 
-  /* Dark overlay for readability */
-  body::after {
-    content: '';
+  .bg-overlay {
     position: fixed;
     inset: 0;
-    background: 
-      radial-gradient(ellipse at 50% 0%, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.85) 70%),
-      linear-gradient(to bottom, rgba(10,10,10,0.9), rgba(10,10,10,0.95));
-    pointer-events: none;
-    z-index: 0;
+    background: rgba(0,0,0,.45);
+    z-index: -1;
   }
 
   .wrapper {
@@ -73,7 +53,6 @@
     z-index: 1;
   }
 
-  /* ── BANNER ── */
   .banner {
     width: 100%;
     height: 220px;
@@ -94,7 +73,6 @@
     background: linear-gradient(to bottom, transparent 40%, rgba(8,8,8,0.95) 100%);
   }
 
-  /* ── PROFILE HEADER ── */
   .profile-header {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -160,7 +138,6 @@
   }
   .flag { font-size: 14px; }
 
-  /* ── MAIN GRID ── */
   .main-grid {
     display: grid;
     grid-template-columns: 1fr 220px;
@@ -168,7 +145,6 @@
     margin-top: 12px;
   }
 
-  /* ── CARDS ── */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -184,8 +160,6 @@
     margin-bottom: 14px;
   }
 
-  /* ── SPOTIFY CARD ── */
-  .spotify-card { }
   .spotify-inner {
     display: flex;
     align-items: center;
@@ -229,9 +203,7 @@
     width: 0%;
     transition: width 1s linear;
   }
-  .spotify-icon {
-    flex-shrink: 0;
-  }
+  .spotify-icon { flex-shrink: 0; }
   .spotify-not-playing {
     color: var(--muted);
     font-size: 13px;
@@ -240,7 +212,6 @@
     gap: 8px;
   }
 
-  /* ── SOCIALS ── */
   .socials-list {
     display: flex;
     flex-direction: column;
@@ -273,7 +244,6 @@
   .social-value { font-size: 13px; font-weight: 500; }
   .social-text { display: flex; flex-direction: column; gap: 1px; }
 
-  /* ── ONLINE INDICATOR ── */
   .online-badge {
     display: flex;
     align-items: center;
@@ -290,7 +260,6 @@
     background: #57f287;
   }
 
-  /* ── ACTIVITY ── */
   .activity-list { display: flex; flex-direction: column; gap: 10px; }
   .activity-item {
     display: flex;
@@ -312,6 +281,58 @@
   .activity-detail { font-size: 11px; color: var(--muted); margin-top: 2px; }
   .no-activity { font-size: 13px; color: var(--muted); }
 
+  .projects-carousel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+  .projects-track {
+    display: flex;
+    transition: transform 0.5s ease;
+  }
+  .project-slide {
+    min-width: 100%;
+    padding: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text);
+    display: block;
+    transition: border-color 0.2s;
+  }
+  .project-slide:hover {
+    border-color: #444;
+  }
+  .project-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #fff;
+  }
+  .project-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .carousel-dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  .carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #333;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .carousel-dot.active {
+    background: #fff;
+  }
+
   @media (max-width: 640px) {
     .main-grid { grid-template-columns: 1fr; }
     .banner { height: 140px; }
@@ -320,12 +341,13 @@
 </head>
 <body>
 
-<!-- REPEATING VIDEO BACKGROUND -->
-<div class="video-bg-grid" id="videoBgGrid"></div>
+<video autoplay muted loop playsinline id="bgVideo">
+  <source src="https://files.catbox.moe/ptc92a.mp4" type="video/mp4">
+</video>
+<div class="bg-overlay"></div>
 
 <div class="wrapper">
 
-  <!-- BANNER -->
   <div class="banner">
     <video autoplay muted loop playsinline>
       <source src="https://files.catbox.moe/x70a4a.mp4" type="video/mp4" />
@@ -333,7 +355,6 @@
     <div class="banner-overlay"></div>
   </div>
 
-  <!-- PROFILE HEADER -->
   <div class="profile-header">
     <div class="avatar-wrap">
       <img id="avatar" src="" alt="Avatar" />
@@ -350,14 +371,11 @@
     </div>
   </div>
 
-  <!-- MAIN GRID -->
   <div class="main-grid">
 
-    <!-- LEFT COLUMN -->
     <div style="display:flex;flex-direction:column;gap:12px;">
 
-      <!-- SPOTIFY -->
-      <div class="card spotify-card">
+      <div class="card">
         <div class="card-title">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;margin-right:5px;color:#aaa"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
           Listening on Spotify
@@ -370,7 +388,6 @@
         </div>
       </div>
 
-      <!-- ACTIVITY -->
       <div class="card">
         <div class="card-title">Current Activity</div>
         <div id="activity-content" class="activity-list">
@@ -378,12 +395,30 @@
         </div>
       </div>
 
+      <div class="card">
+        <div class="card-title">Projects</div>
+        <div class="projects-carousel" id="projectsCarousel">
+          <div class="projects-track" id="projectsTrack">
+            <a class="project-slide" href="https://kitty-ai-eight.vercel.app/" target="_blank" rel="noopener">
+              <div class="project-name">🐱 Kitty AI</div>
+              <div class="project-desc">AI-powered assistant with smart responses and a cute interface. Built with modern web technologies.</div>
+            </a>
+            <a class="project-slide" href="https://discord.com/oauth2/authorize?client_id=1499412051418812479" target="_blank" rel="noopener">
+              <div class="project-name">🤖 Discord Bot</div>
+              <div class="project-desc">Powerful Discord bot with over 1000 commands. Easy management, simple to use, packed with features.</div>
+            </a>
+          </div>
+          <div class="carousel-dots" id="carouselDots">
+            <div class="carousel-dot active" data-index="0"></div>
+            <div class="carousel-dot" data-index="1"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- RIGHT COLUMN -->
     <div style="display:flex;flex-direction:column;gap:12px;">
 
-      <!-- ONLINE STATUS -->
       <div class="card">
         <div class="online-badge" id="online-badge">
           <div class="online-dot" style="background:#555"></div>
@@ -393,7 +428,6 @@
         <div class="card-title">Socials</div>
         <div class="socials-list">
 
-          <!-- Discord -->
           <a class="social-item" href="https://discord.com/users/1418597263479144471" target="_blank" rel="noopener">
             <svg class="social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026 13.83 13.83 0 0 0 1.226-1.963.074.074 0 0 0-.041-.104 13.175 13.175 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/>
@@ -404,7 +438,6 @@
             </div>
           </a>
 
-          <!-- Spotify -->
           <a class="social-item" href="https://open.spotify.com/user/31xlniaewjvhqy5i74qjxfydaepq" target="_blank" rel="noopener">
             <svg class="social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
@@ -415,7 +448,6 @@
             </div>
           </a>
 
-          <!-- GitHub -->
           <a class="social-item" href="https://github.com/dontcare-dev" target="_blank" rel="noopener">
             <svg class="social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
@@ -426,7 +458,6 @@
             </div>
           </a>
 
-          <!-- YouTube -->
           <a class="social-item" href="https://www.youtube.com/@Deathy_dev.2v" target="_blank" rel="noopener">
             <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
               <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
@@ -437,7 +468,6 @@
             </div>
           </a>
 
-          <!-- Gmail -->
           <a class="social-item" href="mailto:Deathy.dev.2v@gmail.com">
             <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
               <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/>
@@ -452,49 +482,51 @@
       </div>
 
     </div>
-  </div><!-- end main-grid -->
-</div><!-- end wrapper -->
+  </div>
+</div>
 
 <script>
 const DISCORD_ID = '1418597263479144471';
 const LANYARD_URL = `https://api.lanyard.rest/v1/users/${DISCORD_ID}`;
-const BG_VIDEO_URL = 'https://files.catbox.moe/ptc92a.mp4';
 
 let spotifyInterval = null;
 let spotifyStart = null;
 let spotifyDuration = null;
+let currentSlide = 0;
+let carouselInterval;
 
-// ── GENERATE REPEATING VIDEO BACKGROUND ──
-function createVideoBackground() {
-  const grid = document.getElementById('videoBgGrid');
-  const cols = Math.ceil(window.innerWidth / 300);
-  const rows = Math.ceil(window.innerHeight / 300);
-  const totalVideos = cols * rows;
-  
-  grid.innerHTML = '';
-  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-  grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-  
-  for (let i = 0; i < totalVideos; i++) {
-    const video = document.createElement('video');
-    video.src = BG_VIDEO_URL;
-    video.autoplay = true;
-    video.muted = true;
-    video.loop = true;
-    video.playsinline = true;
-    grid.appendChild(video);
+function initCarousel() {
+  const track = document.getElementById('projectsTrack');
+  const dots = document.querySelectorAll('.carousel-dot');
+  const totalSlides = dots.length;
+
+  function goToSlide(index) {
+    currentSlide = index;
+    track.style.transform = `translateX(-${currentSlide * 100}%)`;
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === currentSlide);
+    });
   }
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      goToSlide(parseInt(dot.dataset.index));
+      resetCarouselInterval();
+    });
+  });
+
+  function nextSlide() {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    goToSlide(currentSlide);
+  }
+
+  function resetCarouselInterval() {
+    clearInterval(carouselInterval);
+    carouselInterval = setInterval(nextSlide, 4000);
+  }
+
+  carouselInterval = setInterval(nextSlide, 4000);
 }
-
-// Initialize background
-createVideoBackground();
-
-// Regenerate on window resize
-let resizeTimeout;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(createVideoBackground, 250);
-});
 
 function updateSpotify(data) {
   const el = document.getElementById('spotify-content');
@@ -569,7 +601,6 @@ async function fetchLanyard() {
     if (!json.success) return;
     const d = json.data;
 
-    // Avatar
     const avatarEl = document.getElementById('avatar');
     if (d.discord_user) {
       const user = d.discord_user;
@@ -591,6 +622,7 @@ async function fetchLanyard() {
   }
 }
 
+initCarousel();
 fetchLanyard();
 setInterval(fetchLanyard, 15000);
 </script>
