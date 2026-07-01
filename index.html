@@ -28,11 +28,49 @@
     justify-content: center;
     align-items: flex-start;
     padding: 40px 16px;
+    position: relative;
+  }
+
+  /* ── REPEATING VIDEO BACKGROUND ── */
+  .video-bg-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-rows: repeat(auto-fill, minmax(300px, 1fr));
+    overflow: hidden;
+    pointer-events: none;
+  }
+  
+  .video-bg-grid video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.15;
+    mix-blend-mode: screen;
+  }
+
+  /* Dark overlay for readability */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 50% 0%, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.85) 70%),
+      linear-gradient(to bottom, rgba(10,10,10,0.9), rgba(10,10,10,0.95));
+    pointer-events: none;
+    z-index: 0;
   }
 
   .wrapper {
     width: 100%;
     max-width: 900px;
+    position: relative;
+    z-index: 1;
   }
 
   /* ── BANNER ── */
@@ -281,6 +319,10 @@
 </style>
 </head>
 <body>
+
+<!-- REPEATING VIDEO BACKGROUND -->
+<div class="video-bg-grid" id="videoBgGrid"></div>
+
 <div class="wrapper">
 
   <!-- BANNER -->
@@ -416,10 +458,43 @@
 <script>
 const DISCORD_ID = '1418597263479144471';
 const LANYARD_URL = `https://api.lanyard.rest/v1/users/${DISCORD_ID}`;
+const BG_VIDEO_URL = 'https://files.catbox.moe/ptc92a.mp4';
 
 let spotifyInterval = null;
 let spotifyStart = null;
 let spotifyDuration = null;
+
+// ── GENERATE REPEATING VIDEO BACKGROUND ──
+function createVideoBackground() {
+  const grid = document.getElementById('videoBgGrid');
+  const cols = Math.ceil(window.innerWidth / 300);
+  const rows = Math.ceil(window.innerHeight / 300);
+  const totalVideos = cols * rows;
+  
+  grid.innerHTML = '';
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+  
+  for (let i = 0; i < totalVideos; i++) {
+    const video = document.createElement('video');
+    video.src = BG_VIDEO_URL;
+    video.autoplay = true;
+    video.muted = true;
+    video.loop = true;
+    video.playsinline = true;
+    grid.appendChild(video);
+  }
+}
+
+// Initialize background
+createVideoBackground();
+
+// Regenerate on window resize
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(createVideoBackground, 250);
+});
 
 function updateSpotify(data) {
   const el = document.getElementById('spotify-content');
