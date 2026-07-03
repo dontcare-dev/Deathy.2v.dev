@@ -1,899 +1,646 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>^^ · Discord Bot</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #0b0b0b;
-      color: #f0f0f0;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-    a { color: inherit; text-decoration: none; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Deathy — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    #aurora-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      pointer-events: none;
-      display: block;
-    }
+  :root {
+    --bg: #080808;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: #222222;
+    --text: #f0f0f0;
+    --muted: #777;
+    --accent: #ffffff;
+  }
 
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 1000;
-      background: rgba(11, 11, 11, 0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      padding: 0.8rem 0;
-    }
-    nav .container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-    .nav-brand .bot-logo-small {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .nav-brand span {
-      font-weight: 700;
-      font-size: 1.3rem;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #ffffff 60%, #888);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-      font-weight: 500;
-      font-size: 0.9rem;
-      flex-wrap: wrap;
-    }
-    .nav-links a {
-      opacity: 0.7;
-      transition: opacity 0.2s, color 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .nav-links a:hover { opacity: 1; color: #fff; }
-    .nav-cta {
-      background: #fff;
-      color: #000 !important;
-      padding: 0.4rem 1.2rem;
-      border-radius: 40px;
-      opacity: 1 !important;
-      font-weight: 600;
-      transition: background 0.2s, transform 0.2s;
-    }
-    .nav-cta:hover { background: #ddd; transform: scale(1.03); }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 16px;
+  }
 
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 6rem 1rem 4rem;
-      position: relative;
-      overflow: hidden;
-      background: transparent;
-    }
-    .hero::after {
-      content: '';
-      position: absolute;
-      top: -30%;
-      right: -20%;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 800px;
-    }
-    .hero-logo {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-      margin-bottom: 1.5rem;
-      transition: transform 0.4s;
-    }
-    .hero-logo:hover { transform: scale(1.04); }
-    .hero h1 {
-      font-size: 4.5rem;
-      font-weight: 800;
-      letter-spacing: -2px;
-      line-height: 1.1;
-      margin-bottom: 0.5rem;
-    }
-    .hero h1 .caret { font-weight: 300; color: #888; }
-    .hero .subtitle {
-      font-size: 1.2rem;
-      color: #aaa;
-      font-weight: 400;
-      margin-bottom: 0.5rem;
-      letter-spacing: 0.3px;
-    }
-    .hero .badge {
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.06);
-      padding: 0.3rem 1.2rem;
-      border-radius: 40px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      border: 1px solid rgba(255,255,255,0.08);
-      margin-bottom: 2rem;
-      color: #ccc;
-    }
-    .hero .badge i { margin-right: 8px; }
-    .hero-buttons {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.8rem 2rem;
-      border-radius: 40px;
-      font-weight: 600;
-      font-size: 1rem;
-      transition: all 0.25s;
-      border: 1px solid transparent;
-      cursor: pointer;
-    }
-    .btn-primary {
-      background: #fff;
-      color: #0b0b0b;
-    }
-    .btn-primary:hover {
-      background: #ddd;
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(255,255,255,0.1);
-    }
-    .btn-outline {
-      border-color: rgba(255,255,255,0.25);
-      color: #fff;
-    }
-    .btn-outline:hover {
-      background: rgba(255,255,255,0.06);
-      border-color: #fff;
-      transform: translateY(-2px);
-    }
+  #bgVideo {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+    opacity: 1;
+  }
 
-    section { padding: 5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-    section:last-of-type { border-bottom: none; }
-    .section-title {
-      font-size: 2.4rem;
-      font-weight: 700;
-      letter-spacing: -1px;
-      margin-bottom: 0.5rem;
-    }
-    .section-sub {
-      color: #999;
-      font-size: 1.05rem;
-      margin-bottom: 2.5rem;
-    }
-    .section-title i { margin-right: 12px; color: #aaa; font-size: 1.8rem; }
+  .bg-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: -1;
+  }
 
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      align-items: center;
-    }
-    .about-text p {
-      font-size: 1.1rem;
-      color: #ccc;
-      margin-bottom: 1.2rem;
-    }
-    .about-text .highlight { color: #fff; font-weight: 600; }
-    .about-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-    }
-    .stat-card {
-      background: rgba(255,255,255,0.03);
-      border-radius: 16px;
-      padding: 1.5rem 1rem;
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.05);
-      transition: background 0.2s;
-    }
-    .stat-card:hover { background: rgba(255,255,255,0.06); }
-    .stat-card i { font-size: 2rem; color: #ddd; margin-bottom: 0.3rem; }
-    .stat-number { font-size: 2rem; font-weight: 700; letter-spacing: -0.5px; }
-    .stat-label { font-size: 0.9rem; color: #888; }
+  .wrapper {
+    width: 100%;
+    max-width: 900px;
+    position: relative;
+    z-index: 1;
+  }
 
-    .commands-wrapper {
-      background: rgba(255,255,255,0.02);
-      border-radius: 20px;
-      padding: 2rem;
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-    .commands-search {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-    .commands-search input {
-      flex: 1;
-      padding: 0.8rem 1.2rem;
-      border-radius: 40px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.04);
-      color: #f0f0f0;
-      font-size: 1rem;
-      outline: none;
-      transition: border 0.2s;
-      min-width: 200px;
-    }
-    .commands-search input:focus {
-      border-color: rgba(255,255,255,0.25);
-    }
-    .commands-search .category-filter {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .commands-search .category-filter button {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
-      padding: 0.5rem 1.2rem;
-      border-radius: 30px;
-      color: #ccc;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: inherit;
-    }
-    .commands-search .category-filter button:hover {
-      background: rgba(255,255,255,0.12);
-      color: #fff;
-    }
-    .commands-search .category-filter button.active {
-      background: #fff;
-      color: #0b0b0b;
-      border-color: #fff;
-    }
-    .commands-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 0.8rem;
-      max-height: 600px;
-      overflow-y: auto;
-      padding-right: 0.5rem;
-    }
-    .commands-grid::-webkit-scrollbar {
-      width: 6px;
-    }
-    .commands-grid::-webkit-scrollbar-track {
-      background: rgba(255,255,255,0.02);
-    }
-    .commands-grid::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.15);
-      border-radius: 10px;
-    }
-    .command-item {
-      background: rgba(255,255,255,0.03);
-      padding: 0.5rem 0.8rem;
-      border-radius: 12px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      border: 1px solid rgba(255,255,255,0.04);
-      transition: background 0.15s, border-color 0.15s;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-    .command-item:hover {
-      background: rgba(255,255,255,0.07);
-      border-color: rgba(255,255,255,0.1);
-    }
-    .command-item .cmd-prefix {
-      color: #777;
-      font-weight: 300;
-      margin-right: 0.2rem;
-    }
-    .command-item .cmd-name {
-      color: #e0e0e0;
-    }
-    .command-item .cmd-cat-badge {
-      font-size: 0.65rem;
-      background: rgba(255,255,255,0.06);
-      padding: 0.1rem 0.5rem;
-      border-radius: 20px;
-      color: #999;
-      margin-left: auto;
-      white-space: nowrap;
-    }
-    .pagination {
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-top: 2rem;
-      flex-wrap: wrap;
-    }
-    .pagination button {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
-      padding: 0.3rem 0.9rem;
-      border-radius: 20px;
-      color: #ccc;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: inherit;
-    }
-    .pagination button:hover {
-      background: rgba(255,255,255,0.12);
-      color: #fff;
-    }
-    .pagination button.active {
-      background: #fff;
-      color: #0b0b0b;
-      border-color: #fff;
-    }
-    .commands-stats {
-      text-align: center;
-      color: #888;
-      font-size: 0.9rem;
-      margin-bottom: 1rem;
-    }
+  .banner {
+    width: 100%;
+    height: 220px;
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
+    position: relative;
+    background: #000;
+  }
+  .banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.85;
+  }
+  .banner-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(8,8,8,0.95) 100%);
+  }
 
-    .dev-card {
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-      background: rgba(255,255,255,0.03);
-      border-radius: 24px;
-      padding: 2rem 2.5rem;
-      border: 1px solid rgba(255,255,255,0.06);
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .dev-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid rgba(255,255,255,0.1);
-    }
-    .dev-info h3 { font-size: 1.5rem; font-weight: 600; }
-    .dev-info .dev-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #aaa;
-      font-size: 0.95rem;
-    }
-    .dev-info .dev-status .status-dot {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #555;
-    }
-    .dev-info .dev-status .status-dot.online { background: #3ba55d; }
-    .dev-info .dev-status .status-dot.idle { background: #faa81a; }
-    .dev-info .dev-status .status-dot.dnd { background: #ed4245; }
-    .dev-info .dev-status .status-dot.offline { background: #747f8d; }
-    .dev-links {
-      display: flex;
-      gap: 1.2rem;
-      margin-top: 0.5rem;
-    }
-    .dev-links a { color: #aaa; transition: color 0.2s; font-size: 1.2rem; }
-    .dev-links a:hover { color: #fff; }
+  .profile-header {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    padding: 0 28px 24px;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+  }
 
-    .invite-section {
-      text-align: center;
-      background: linear-gradient(145deg, #111, #0b0b0b);
-      border-radius: 32px;
-      padding: 3rem 2rem;
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-    .invite-section .btn { font-size: 1.1rem; padding: 1rem 2.8rem; }
+  .avatar-wrap {
+    position: relative;
+    margin-top: -44px;
+    flex-shrink: 0;
+  }
+  .avatar-wrap img {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    border: 3px solid var(--bg);
+    object-fit: cover;
+    display: block;
+    background: #222;
+  }
+  .status-dot {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    background: #3d3d3d;
+    transition: background 0.4s;
+  }
+  .status-dot.online  { background: #57f287; }
+  .status-dot.idle    { background: #fee75c; }
+  .status-dot.dnd     { background: #ed4245; }
+  .status-dot.offline { background: #5c5c5c; }
 
-    footer {
-      padding: 2rem 0;
-      text-align: center;
-      border-top: 1px solid rgba(255,255,255,0.04);
-      color: #666;
-      font-size: 0.85rem;
-    }
-    footer i { margin: 0 4px; }
+  .profile-info {
+    flex: 1;
+    padding-top: 18px;
+  }
+  .profile-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .profile-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .flag { font-size: 14px; }
 
-    @media (max-width: 768px) {
-      .container { padding: 0 1.2rem; }
-      .hero h1 { font-size: 3rem; }
-      .hero-logo { width: 100px; height: 100px; }
-      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
-      .about-stats { grid-template-columns: 1fr 1fr; }
-      .nav-links { display: none; }
-      .commands-grid { grid-template-columns: 1fr 1fr; max-height: 400px; }
-      .dev-card { flex-direction: column; text-align: center; padding: 1.5rem; }
-    }
-    @media (max-width: 480px) {
-      .hero h1 { font-size: 2.4rem; }
-      .stat-number { font-size: 1.6rem; }
-      .commands-grid { grid-template-columns: 1fr; }
-      .commands-search { flex-direction: column; }
-    }
-  </style>
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .card-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .spotify-inner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .spotify-art {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    background: var(--surface2);
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+  .spotify-meta { flex: 1; min-width: 0; }
+  .spotify-track {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .spotify-artist {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .spotify-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  .spotify-progress {
+    height: 100%;
+    background: #fff;
+    border-radius: 2px;
+    width: 0%;
+    transition: width 1s linear;
+  }
+  .spotify-icon { flex-shrink: 0; }
+  .spotify-not-playing {
+    color: var(--muted);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .socials-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .social-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 13px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .social-item:hover {
+    border-color: #444;
+    background: #222;
+  }
+  .social-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    fill: var(--muted);
+  }
+  .social-label { font-size: 11px; color: var(--muted); }
+  .social-value { font-size: 13px; font-weight: 500; }
+  .social-text { display: flex; flex-direction: column; gap: 1px; }
+
+  .online-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #57f287;
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+  .online-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #57f287;
+  }
+
+  .activity-list { display: flex; flex-direction: column; gap: 10px; }
+  .activity-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: var(--surface2);
+    border-radius: 7px;
+    border: 1px solid var(--border);
+  }
+  .activity-img {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    background: #222;
+    object-fit: cover;
+  }
+  .activity-name { font-size: 13px; font-weight: 600; }
+  .activity-detail { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .no-activity { font-size: 13px; color: var(--muted); }
+
+  .projects-carousel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+  .projects-track {
+    display: flex;
+    transition: transform 0.5s ease;
+  }
+  .project-slide {
+    min-width: 100%;
+    padding: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text);
+    display: block;
+    transition: border-color 0.2s;
+  }
+  .project-slide:hover {
+    border-color: #444;
+  }
+  .project-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .project-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .carousel-dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  .carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #333;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .carousel-dot.active {
+    background: #fff;
+  }
+
+  @media (max-width: 640px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .banner { height: 140px; }
+  }
+</style>
 </head>
 <body>
 
-  <canvas id="aurora-canvas"></canvas>
+<video autoplay muted loop playsinline id="bgVideo">
+  <source src="https://files.catbox.moe/ptc92a.mp4" type="video/mp4">
+</video>
+<div class="bg-overlay"></div>
 
-  <nav>
-    <div class="container">
-      <div class="nav-brand">
-        <img src="https://i.ibb.co/W4tk7RQR/9e25edf141222c0bbe8106f0cb7f0c55.jpg" alt="^^ logo" class="bot-logo-small" />
-        <span>^^</span>
-      </div>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li>
-        <li><a href="#commands"><i class="fas fa-list"></i> Commands</a></li>
-        <li><a href="#invite" class="nav-cta"><i class="fas fa-plus-circle"></i> Invite</a></li>
-      </ul>
+<div class="wrapper">
+
+  <div class="banner">
+    <img src="https://files.catbox.moe/2nw33e.gif" alt="Banner" />
+    <div class="banner-overlay"></div>
+  </div>
+
+  <div class="profile-header">
+    <div class="avatar-wrap">
+      <img id="avatar" src="" alt="Avatar" />
+      <div class="status-dot offline" id="status-dot"></div>
     </div>
-  </nav>
-
-  <section class="hero" id="home">
-    <div class="hero-content">
-      <img src="https://i.ibb.co/W4tk7RQR/9e25edf141222c0bbe8106f0cb7f0c55.jpg" alt="^^ logo" class="hero-logo" />
-      <h1>^^ <span class="caret">·</span></h1>
-      <p class="subtitle">The multi‑purpose Discord bot with <strong>800+ commands</strong></p>
-      <div class="badge"><i class="fas fa-robot"></i> Built with discord.js · 2025</div>
-      <div class="hero-buttons">
-        <a href="https://discord.com/oauth2/authorize?client_id=1499412051418812479" target="_blank" class="btn btn-primary">
-          <i class="fas fa-plus-circle"></i> Invite to Server
-        </a>
-        <a href="#commands" class="btn btn-outline">
-          <i class="fas fa-arrow-down"></i> View Commands
-        </a>
+    <div class="profile-info">
+      <div class="profile-name" id="display-name">Loading...</div>
+      <div class="profile-meta">
+        <span class="flag">🇮🇳</span>
+        <span>India</span>
+        <span style="color:#333">·</span>
+        <span id="discord-tag" style="color:#555">—</span>
       </div>
     </div>
-  </section>
+  </div>
 
-  <section id="about">
-    <div class="container">
-      <div class="about-grid">
-        <div class="about-text">
-          <h2 class="section-title"><i class="fas fa-caret-right"></i> About ^^</h2>
-          <p>
-            <span class="highlight">^^</span> is a powerful, all‑in‑one Discord bot crafted with
-            <span class="highlight">discord.js</span>. With over <strong>800 commands</strong>
-            spanning moderation, security, economy, utility, social, and advanced systems,
-            it's designed to enhance any server.
-          </p>
-          <p>
-            Leveraging external APIs and databases, ^^ delivers real‑time information,
-            custom configurations, and a seamless user experience — all maintained by
-            a solo developer.
-          </p>
+  <div class="main-grid">
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+
+      <div class="card">
+        <div class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;margin-right:5px;color:#aaa"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          Listening on Spotify
         </div>
-        <div class="about-stats">
-          <div class="stat-card">
-            <i class="fas fa-hashtag"></i>
-            <div class="stat-number">800+</div>
-            <div class="stat-label">Commands</div>
-          </div>
-          <div class="stat-card">
-            <i class="fas fa-code-branch"></i>
-            <div class="stat-number">2025</div>
-            <div class="stat-label">Launch Year</div>
-          </div>
-          <div class="stat-card">
-            <i class="fas fa-database"></i>
-            <div class="stat-number">Multi</div>
-            <div class="stat-label">APIs &amp; Databases</div>
-          </div>
-          <div class="stat-card">
-            <i class="fas fa-user-astronaut"></i>
-            <div class="stat-number">Solo</div>
-            <div class="stat-label">Developer</div>
+        <div id="spotify-content">
+          <div class="spotify-not-playing">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#555"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+            Not playing anything right now
           </div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <section id="commands">
-    <div class="container">
-      <h2 class="section-title"><i class="fas fa-list"></i> Command List</h2>
-      <p class="section-sub">All <span id="totalCmdCount"></span> commands, organised by category. Search or filter below.</p>
-      <div class="commands-wrapper">
-        <div class="commands-search">
-          <input type="text" id="cmdSearch" placeholder="Search commands..." />
-          <div class="category-filter" id="categoryFilter">
-            <button class="active" data-cat="all">All</button>
-            <button data-cat="moderation">Moderation</button>
-            <button data-cat="security">Security</button>
-            <button data-cat="economy">Economy</button>
-            <button data-cat="social">Social</button>
-            <button data-cat="utility">Utility</button>
-            <button data-cat="advanced">Advanced</button>
-          </div>
+      <div class="card">
+        <div class="card-title">Current Activity</div>
+        <div id="activity-content" class="activity-list">
+          <div class="no-activity">No activity detected</div>
         </div>
-        <div class="commands-stats">Showing <span id="visibleCount">0</span> commands</div>
-        <div class="commands-grid" id="commandsGrid"></div>
-        <div class="pagination" id="pagination"></div>
       </div>
-    </div>
-  </section>
 
-  <section id="invite">
-    <div class="container">
-      <div class="invite-section">
-        <h2 style="font-size:2rem; font-weight:700;">Ready to bring ^^ to your server?</h2>
-        <p style="color:#aaa; margin-bottom:2rem;">Click below to invite the bot and start using 800+ commands instantly.</p>
-        <a href="https://discord.com/oauth2/authorize?client_id=1499412051418812479" target="_blank" class="btn btn-primary" style="font-size:1.1rem; padding:1rem 3rem;">
-          <i class="fas fa-plus-circle"></i> Invite ^^
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <section id="developer" style="border-bottom: none;">
-    <div class="container">
-      <h2 class="section-title"><i class="fas fa-user-cog"></i> Developer</h2>
-      <p class="section-sub">Meet the solo dev behind ^^</p>
-      <div class="dev-card" id="devCard">
-        <img src="" alt="Developer avatar" class="dev-avatar" id="devAvatar" />
-        <div class="dev-info">
-          <h3 id="devName">Loading...</h3>
-          <div class="dev-status">
-            <span class="status-dot" id="statusDot"></span>
-            <span id="devStatusText">Fetching status...</span>
-          </div>
-          <div class="dev-links">
-            <a href="https://dontcare-dev.github.io/Deathy.2v.dev/" target="_blank" title="Portfolio">
-              <i class="fas fa-globe"></i>
+      <div class="card">
+        <div class="card-title">Projects</div>
+        <div class="projects-carousel" id="projectsCarousel">
+          <div class="projects-track" id="projectsTrack">
+            <a class="project-slide" href="https://kitty-ai-eight.vercel.app/" target="_blank" rel="noopener">
+              <div class="project-name">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="7" width="18" height="13" rx="4" />
+                  <path d="M8 7V4h8v3" />
+                  <circle cx="9" cy="13" r="1.5" fill="currentColor" />
+                  <circle cx="15" cy="13" r="1.5" fill="currentColor" />
+                  <path d="M9 17h6" />
+                  <path d="M12 4V2" />
+                </svg>
+                Kitty AI
+              </div>
+              <div class="project-desc">AI-powered assistant with smart responses and a cute interface. Built with modern web technologies.</div>
             </a>
-            <a href="#" id="devDiscordLink" title="Discord Profile">
-              <i class="fab fa-discord"></i>
+            <a class="project-slide" href="https://dontcare-dev.github.io/2v./" target="_blank" rel="noopener">
+              <div class="project-name">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026 13.83 13.83 0 0 0 1.226-1.963.074.074 0 0 0-.041-.104 13.175 13.175 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/>
+                </svg>
+                Discord Bot
+              </div>
+              <div class="project-desc">Powerful Discord bot with over 1000 commands. Easy management, simple to use, packed with features.</div>
             </a>
           </div>
+          <div class="carousel-dots" id="carouselDots">
+            <div class="carousel-dot active" data-index="0"></div>
+            <div class="carousel-dot" data-index="1"></div>
+          </div>
         </div>
       </div>
+
     </div>
-  </section>
 
-  <footer>
-    <div class="container">
-      <p>&copy; 2026 ^^ Bot · Made with <i class="fas fa-heart" style="color:#888;"></i> by <a href="https://dontcare-dev.github.io/Deathy.2v.dev/" target="_blank" style="color:#aaa; text-decoration:underline;">Deathy</a></p>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+
+      <div class="card">
+        <div class="online-badge" id="online-badge">
+          <div class="online-dot" style="background:#555"></div>
+          <span>Offline</span>
+        </div>
+
+        <div class="card-title">Socials</div>
+        <div class="socials-list">
+
+          <a class="social-item" href="https://discord.com/users/1418597263479144471" target="_blank" rel="noopener">
+            <svg class="social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026 13.83 13.83 0 0 0 1.226-1.963.074.074 0 0 0-.041-.104 13.175 13.175 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/>
+            </svg>
+            <div class="social-text">
+              <span class="social-label">Discord</span>
+              <span class="social-value" id="discord-name">deathy.dev</span>
+            </div>
+          </a>
+
+          <a class="social-item" href="https://open.spotify.com/user/31xlniaewjvhqy5i74qjxfydaepq" target="_blank" rel="noopener">
+            <svg class="social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+            </svg>
+            <div class="social-text">
+              <span class="social-label">Spotify</span>
+              <span class="social-value">deathy</span>
+            </div>
+          </a>
+
+          <a class="social-item" href="https://github.com/dontcare-dev" target="_blank" rel="noopener">
+            <svg class="social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+            </svg>
+            <div class="social-text">
+              <span class="social-label">GitHub</span>
+              <span class="social-value">dontcare-dev</span>
+            </div>
+          </a>
+
+          <a class="social-item" href="https://www.youtube.com/@Deathy_dev.2v" target="_blank" rel="noopener">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+            <div class="social-text">
+              <span class="social-label">YouTube</span>
+              <span class="social-value">Deathy_dev.2v</span>
+            </div>
+          </a>
+
+          <a class="social-item" href="mailto:Deathy.dev.2v@gmail.com">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/>
+            </svg>
+            <div class="social-text">
+              <span class="social-label">Gmail</span>
+              <span class="social-value">Deathy.dev.2v</span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+
     </div>
-  </footer>
+  </div>
+</div>
 
-  <script>
-    const COMMANDS_DATA = {
-      moderation: ["ban","unban","kick","mute","unmute","timeout","untimeout","warn","warnings","clearwarnings","warnpurge","purge","slowmode","slowmodeall","lock","unlock","lockdown","unlockdown","nickname","resetnickname","roleadd","roleremove","roleall","massrole","masskick","massban","hidechannel","showchannel","moveuser","voicekick","voicemute","voiceunmute","voiceban","voiceunban","sticky","unsticky","cleanbots","cleanlinks","cleanimages","cleanuser","note","notes","deletenote","modlog","case","cases","caseexport","casenote","reasonedit","modstats","appeal","approveappeal","denyappeal","softban","tempban","tempmute","jail","unjail","banlist","mutelist","permcheck","permsync","channelclone","renamechannel","renamerole","rolecolor","rolecreate","roledelete","nukechannel"],
-      security: ["antiraid","raidmode","raidkick","raidhistory","antispam","spamthreshold","antilink","linkwhitelist","antiinvite","inviteblock","antibot","antiemoji","antimention","antighostping","antihoist","antialt","anticaps","antiselfbot","antiwebhookspam","webhookalert","webhookpurge","wordfilter","wordfilterremove","wordfilterlist","verification","verificationlevel","verify","verificationpanel","captcha","whitelist","unwhitelist","blacklist","unblacklist","trusted","untrusted","trustedrolelist","securitystatus","securityscan","securitypreset","securityconfig","securityreport","securityexport","restorepermissions","auditlog","audituser","permissionaudit","dangerousroles","inviteaudit","botaudit","nukebot","joinlog","leavelog","securitylog","suspicioususers","altcheck","accountage","devicecheck","mfarequire","tokenalert","phishingcheck","urlscan","domaincheck","quarantine","unquarantine","quarantinerole","quarantinelist","emergencylock","lockrole","unlockrole","incidentreport","banappealchannel"],
-      economy: ["balance","networth","daily","dailystreak","weekly","weeklystreak","monthly","work","job","jobinfo","promote","salary","beg","crime","rob","heist","duel","deposit","withdraw","bank","pay","transfer","shop","buy","sell","inventory","iteminfo","useitem","leaderboard","richest","lottery","raffle","gamble","coinflip","slots","blackjack","roulette","scratch","trade","auction","market","economyreset","invest","portfolio","stocks","buystock","sellstock","crafting","mine","fish","hunt","farm","plant","harvest","pet","adoptpet","petfeed","petinfo","petbattle","bounty","bountyboard","claimbounty","taxrate","donate","serverfund","allowance","overtime","quit","resign","fire","hire","employees","payroll","timesheet","clockin","clockout","vacation","sickday","benefits","pension","retire","careerpath","skillpoints","trainskill","certify","internship","apprentice","freelance","gig","contract","moonlight","sidejob","adrevenue","affiliate","referral","referralbonus","influencer","sponsorship","branddeal","viralpost","followergain","subscriberpay","patreon","donationgoal","crowdfund","kickstart","fundinground","seedmoney","angelinvest","venturecapital","unicornstartup","acquisition","buyout","duediligence","termsheet","companyvaluation","equitystake","vestingschedule","businesscreate","businesslist","businessinfo","businessupgrade","businesssell","businessbuy","businessrename","businessstaff","businesshire","businessfire","businessrevenue","businesstax","businessloan","appdev","gamedev","chain","franchise","storefront","apartment","appraisal","atticconvert","basementfinish","eviction","estatesale","forecloseproperty","garageadd","garagesale","homeinspection","landlord","landscaping","mortgage","mortgagepay","poolinstall","property","propertybuy","propertysell","propertylist","propertyrent","propertyrentcollect","propertyupgrade","propertyinsure","realestatemarket","realtor","renovate","tenant","bankloan","loanpay","loanstatus","creditscore","creditcard","creditlimit","creditpay","overdraft","savingsaccount","savingsinterest","cdaccount","retirement401k","ira","insurance","insuranceclaim","lifeinsurance","healthinsurance","warranty","budget","budgetset","budgetreport","expense","expenseadd","expensereport","incomereport","taxfile","taxrefund","taxbracket","taxhaven","offshoreaccount","shellcompany","debtcollector","debtconsolidate","bond","bondbuy","bondsell","bondmature","pawnshop","pawnitem","redeempawn","loanshark","cryptobuy","cryptosell","cryptowallet","cryptomine","cryptostake","cryptojack","nftmint","nftbuy","nftsell","nftgallery","nftauction","rugpull","pumpdump","exitscam","walletdrain","hedgefund","hedgefundjoin","dividend","dividendclaim","dividendyield","shortstock","optionscall","optionsput","margin","marginrecall","stocksplit","stockbuyback","stockoption","stockmanipulate","futurescontract","commodity","commoditybuy","commoditysell","bankheist","robbank","robtrain","robmuseum","heistplan","heistcrew","heistequipment","heistgetaway","banditambush","kidnapransom","gangjoin","gangleave","ganginfo","gangterritory","cartel","cartelboss","mafia","syndicate","underboss","turf","respect","streetcred","hitman","hitcontract","contractkill","bodyguard","bountyhunter","huntbounty","mercenary","protection","extortion","safehouse","launder","moneylaundering","smuggler","fencegoods","blackmarket","darkweb","darkwebmarket","scamcall","phishingscam","identitytheft","creditcardfraud","counterfeit","forgepassport","fakeid","blackmarketid","ponzischeme","hackbank","hackatm","hackcasino","atmskim","botnet","ransomware","malwarekit","phishingkit","carding","skimming","encryptdata","decryptfile","espionage","spynetwork","intel","sabotage","bribeofficial","corruptcop","insidertip","exploit","firewallbreach","vpn","alchemy","potionbrew","potionsell","herbcollect","herbgarden","blacksmith","armorsmith","weaponsmith","goldsmith","silversmith","jewelrycraft","jewelrysell","gemcut","gempolish","craftingrecipe","recipelist","recipelearn","blueprint","blueprintbuy","blueprintsell","schematic","itemupgrade","itemenchant","itemforge","itemrepair","itemdurability","itembreak","itemrecycle","itemmelt","itemdust","cardpack","cardalbum","cardtrade","cardmarket","collectorscard","tradingcard","blindbox","mysterybox","lootbox","rareitem","legendaryitem","distribution","logistics","shipping","freight","customs","importtax","exporttax","tradeembargo","tradedeal","tradewar","sanctions","quota","subsidies","supplychain","supplierdeal","vendoragreement","wholesale","wholesaler","retailer","restocking","inventoryaudit","stocktake","qualitycontrol","productline","productlaunch","productrecall","merchandise","merchsale","discount","coupon","promocode","giftcard","voucher","cashback","membership","subscription","mlm","archaeologydig","digsite","excavate","fossilfind","treasurechest","treasurehunt","treasuremap","silkroad","silktrading","spicemarket","spicetrading","tradecaravan","caravanescort","patent","patentfile","patentsell","licensing","licensedeal","royalty","grant","grantapply","researchfund","rdinvest","innovation","trademark","bankrupt","bailout","liquidate","payoffdebt","banksafe","safedeposit","vault","vaultdeposit","vaultwithdraw","storageunit","inventslot","inventexpand","auctionhouse","auctionbid","auctionwatch","auctionwin","copyrightfile","employeeequity","sharedilution","exitstrategy","drugfarm","drugcook","drugbuy","drugsell","drugdealer","weaponsdealer","fleamarket","mutualfund","pyramidscheme","embargo","tariff","bakery","bookstore","brewery","cabin","cafe","condo","duplex","factory","farmland","fashionline","foodtruck","houseboat","loft","mansion","musicstudio","oilrig","penthouse","ranch","restaurant","techstartup","villa","vineyard","warehouse","artgallery"],
-      social: ["profile","setbio","setcolor","setbanner","badges","marry","divorce","spouse","propose","adopt","disown","family","shiprate","friendcode","addfriend","removefriend","friendlist","block","unblock","blocklist","setmood","mood","moodboard","crush","admire","compliment","roastme","ratewaifu","title","settitle","reputation","giverep","reptop","journal","journaladd","diary","mirror","horoscope","zodiac","personality","aura","simprank","crushlist","meme","joke","pickupline","wouldyourather","truth","dare","confess","confessionboard","hug","kiss","cuddle","pat","poke","tickle","slap","punch","bonk","bite","highfive","handhold","boop","nuzzle","snuggle","wave","bow","blush","cry","laugh","smile","dance","facepalm","shrug","nod","yeet","stare","glare","smirk","wink","yawn","sleepy","think","pout","celebrate","clap","salute","attack","bully","feed","kill","shoot","stab","spank","massage","carry","catch","throw"],
-      utility: ["help","ping","uptime","botinfo","userinfo","serverinfo","roleinfo","channelinfo","avatar","banner","membercount","inviteinfo","emojiinfo","stickerinfo","timezone","reminder","reminders","poll","suggest","translate","calculator","weather","afk","snipe","editsnipe","embed","shorturl","qr","status","stats","settings","todolist","todoadd","tododone","todoremove","notebook","notebookadd","notebookdelete","tag","tagcreate","tagdelete","taglist","define","quote","fact","advice","ascii","binary","base64","hash","color","palette","github","countdown","age","bmi","currency","unitconvert","randomuser","choose","rps","eightball","dice","flip"],
-      advanced: ["automod","smartban","riskscore","heatmap","serverbackup","restorebackup","reactionroles","ticket","close","transcript","giveaway","securitydashboard","economydashboard","dashboard","autorole","welcomemessage","leavemessage","levelsystem","rank","ranktop","xpadd","xpremove","customcommand","customcommandlist","customcommanddelete","scheduler","scheduledlist","scheduledcancel","starboard","eventlog","integrationslist"]
-    };
+<script>
+const DISCORD_ID = '1418597263479144471';
+const LANYARD_URL = `https://api.lanyard.rest/v1/users/${DISCORD_ID}`;
 
-    const categoryIcons = {
-      moderation: 'fa-gavel',
-      security: 'fa-shield-halved',
-      economy: 'fa-coins',
-      social: 'fa-heart',
-      utility: 'fa-wrench',
-      advanced: 'fa-microchip'
-    };
+let spotifyInterval = null;
+let spotifyStart = null;
+let spotifyDuration = null;
+let currentSlide = 0;
+let carouselInterval;
 
-    let allCommands = [];
-    for (const [cat, cmds] of Object.entries(COMMANDS_DATA)) {
-      for (const cmd of cmds) {
-        allCommands.push({ name: cmd, category: cat });
-      }
-    }
-    const unique = new Map();
-    allCommands.forEach(c => { if (!unique.has(c.name)) unique.set(c.name, c); });
-    allCommands = Array.from(unique.values());
+function initCarousel() {
+  const track = document.getElementById('projectsTrack');
+  const dots = document.querySelectorAll('.carousel-dot');
+  const totalSlides = dots.length;
 
-    document.getElementById('totalCmdCount').textContent = allCommands.length;
-
-    const itemsPerPage = 40;
-    let currentPage = 1;
-    let currentFilter = 'all';
-    let currentSearch = '';
-
-    function filterCommands() {
-      let filtered = allCommands;
-      if (currentFilter !== 'all') {
-        filtered = filtered.filter(c => c.category === currentFilter);
-      }
-      if (currentSearch.trim()) {
-        const q = currentSearch.trim().toLowerCase();
-        filtered = filtered.filter(c => c.name.toLowerCase().includes(q));
-      }
-      return filtered;
-    }
-
-    function renderCommands() {
-      const filtered = filterCommands();
-      const total = filtered.length;
-      const totalPages = Math.ceil(total / itemsPerPage);
-      if (currentPage > totalPages) currentPage = totalPages || 1;
-      const start = (currentPage - 1) * itemsPerPage;
-      const end = Math.min(start + itemsPerPage, total);
-      const pageItems = filtered.slice(start, end);
-
-      const grid = document.getElementById('commandsGrid');
-      grid.innerHTML = '';
-      pageItems.forEach(cmd => {
-        const div = document.createElement('div');
-        div.className = 'command-item';
-        div.innerHTML = `
-          <span class="cmd-prefix">/</span>
-          <span class="cmd-name">${cmd.name}</span>
-          <span class="cmd-cat-badge"><i class="fas ${categoryIcons[cmd.category] || 'fa-tag'}"></i> ${cmd.category}</span>
-        `;
-        grid.appendChild(div);
-      });
-
-      document.getElementById('visibleCount').textContent = pageItems.length;
-
-      const pag = document.getElementById('pagination');
-      pag.innerHTML = '';
-      if (totalPages <= 1) return;
-      for (let i = 1; i <= totalPages; i++) {
-        const btn = document.createElement('button');
-        btn.textContent = i;
-        if (i === currentPage) btn.className = 'active';
-        btn.addEventListener('click', () => {
-          currentPage = i;
-          renderCommands();
-          document.getElementById('commandsGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-        pag.appendChild(btn);
-      }
-    }
-
-    document.getElementById('cmdSearch').addEventListener('input', (e) => {
-      currentSearch = e.target.value;
-      currentPage = 1;
-      renderCommands();
+  function goToSlide(index) {
+    currentSlide = index;
+    track.style.transform = `translateX(-${currentSlide * 100}%)`;
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === currentSlide);
     });
+  }
 
-    document.querySelectorAll('#categoryFilter button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('#categoryFilter button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentFilter = btn.dataset.cat;
-        currentPage = 1;
-        renderCommands();
-      });
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      goToSlide(parseInt(dot.dataset.index));
+      resetCarouselInterval();
     });
+  });
 
-    renderCommands();
+  function nextSlide() {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    goToSlide(currentSlide);
+  }
 
-    const USER_ID = '1418597263479144471';
-    const LANYARD_URL = `https://api.lanyard.rest/v1/users/${USER_ID}`;
+  function resetCarouselInterval() {
+    clearInterval(carouselInterval);
+    carouselInterval = setInterval(nextSlide, 4000);
+  }
 
-    async function fetchLanyard() {
-      try {
-        const res = await fetch(LANYARD_URL);
-        if (!res.ok) throw new Error('Lanyard fetch failed');
-        const data = await res.json();
-        if (data.success) updateUI(data.data);
-        else throw new Error('Invalid response');
-      } catch (err) {
-        console.warn('Lanyard error:', err);
-        document.getElementById('devName').textContent = 'Deathy';
-        document.getElementById('devStatusText').textContent = 'Offline';
-        document.getElementById('statusDot').className = 'status-dot offline';
-        document.getElementById('devAvatar').src = 'https://cdn.discordapp.com/avatars/1418597263479144471/unknown.png?size=128';
+  carouselInterval = setInterval(nextSlide, 4000);
+}
+
+function updateSpotify(data) {
+  const el = document.getElementById('spotify-content');
+  if (data.listening_to_spotify && data.spotify) {
+    const sp = data.spotify;
+    spotifyStart = sp.timestamps?.start || Date.now();
+    spotifyDuration = (sp.timestamps?.end || (Date.now() + 200000)) - spotifyStart;
+    clearInterval(spotifyInterval);
+
+    el.innerHTML = `
+      <div class="spotify-inner">
+        <img class="spotify-art" src="${sp.album_art_url || ''}" alt="art" />
+        <div class="spotify-meta">
+          <div class="spotify-track">${sp.song}</div>
+          <div class="spotify-artist">${sp.artist}</div>
+          <div class="spotify-bar"><div class="spotify-progress" id="sp-prog"></div></div>
+        </div>
+        <a href="https://open.spotify.com/track/${sp.track_id}" target="_blank" rel="noopener" class="spotify-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#aaa"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        </a>
+      </div>`;
+
+    spotifyInterval = setInterval(() => {
+      const prog = document.getElementById('sp-prog');
+      if (!prog) { clearInterval(spotifyInterval); return; }
+      const pct = Math.min(((Date.now() - spotifyStart) / spotifyDuration) * 100, 100);
+      prog.style.width = pct + '%';
+    }, 1000);
+  } else {
+    clearInterval(spotifyInterval);
+    el.innerHTML = `
+      <div class="spotify-not-playing">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#555"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        Not playing anything right now
+      </div>`;
+  }
+}
+
+function updateStatus(status) {
+  const dot = document.getElementById('status-dot');
+  const badge = document.getElementById('online-badge');
+  dot.className = 'status-dot ' + status;
+  const labels = { online: ['#57f287','Online'], idle: ['#fee75c','Idle'], dnd: ['#ed4245','Do Not Disturb'], offline: ['#5c5c5c','Offline'] };
+  const [color, label] = labels[status] || ['#5c5c5c','Offline'];
+  badge.querySelector('.online-dot').style.background = color;
+  badge.querySelector('span').style.color = color;
+  badge.querySelector('span').textContent = label;
+}
+
+function updateActivities(activities) {
+  const el = document.getElementById('activity-content');
+  const filtered = (activities || []).filter(a => a.type === 0 || a.type === 1 || a.type === 2);
+  if (!filtered.length) { el.innerHTML = '<div class="no-activity">No activity detected</div>'; return; }
+  el.innerHTML = filtered.map(a => {
+    const img = a.assets?.large_image
+      ? `https://cdn.discordapp.com/app-assets/${a.application_id}/${a.assets.large_image}.png`
+      : '';
+    return `<div class="activity-item">
+      ${img ? `<img class="activity-img" src="${img}" alt="" onerror="this.style.display='none'" />` : '<div class="activity-img"></div>'}
+      <div>
+        <div class="activity-name">${a.name}</div>
+        <div class="activity-detail">${a.details || a.state || ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function fetchLanyard() {
+  try {
+    const res = await fetch(LANYARD_URL);
+    const json = await res.json();
+    if (!json.success) return;
+    const d = json.data;
+
+    const avatarEl = document.getElementById('avatar');
+    if (d.discord_user) {
+      const user = d.discord_user;
+      const avatarHash = user.avatar;
+      if (avatarHash) {
+        const ext = avatarHash.startsWith('a_') ? 'gif' : 'png';
+        avatarEl.src = `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${avatarHash}.${ext}?size=128`;
       }
+      document.getElementById('display-name').textContent = user.global_name || user.username || 'Deathy';
+      document.getElementById('discord-tag').textContent = user.username || '';
+      document.getElementById('discord-name').textContent = user.global_name || user.username || 'deathy.dev';
     }
 
-    function updateUI(data) {
-      const avatarUrl = `https://cdn.discordapp.com/avatars/${data.discord_user.id}/${data.discord_user.avatar}.png?size=128`;
-      document.getElementById('devAvatar').src = avatarUrl;
-      document.getElementById('devName').textContent = data.discord_user.global_name || data.discord_user.username;
-      const status = data.discord_status || 'offline';
-      const dot = document.getElementById('statusDot');
-      dot.className = `status-dot ${status}`;
-      const statusMap = { online: 'Online', idle: 'Idle', dnd: 'Do Not Disturb', offline: 'Offline' };
-      document.getElementById('devStatusText').textContent = statusMap[status] || 'Offline';
-      if (data.activities && data.activities.length) {
-        const custom = data.activities.find(a => a.type === 4);
-        if (custom) document.getElementById('devStatusText').textContent += ` · ${custom.state || ''}`;
-      }
-      document.getElementById('devDiscordLink').href = `https://discord.com/users/${data.discord_user.id}`;
-    }
+    updateStatus(d.discord_status || 'offline');
+    updateSpotify(d);
+    updateActivities(d.activities);
+  } catch(e) {
+    console.warn('Lanyard fetch failed', e);
+  }
+}
 
-    fetchLanyard();
-
-    // ─── WebGL Aurora Background ───
-    (function initAurora() {
-      const canvas = document.getElementById('aurora-canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      if (!gl) {
-        canvas.style.display = 'none';
-        return;
-      }
-
-      function resize() {
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        canvas.width = w;
-        canvas.height = h;
-        gl.viewport(0, 0, w, h);
-      }
-      window.addEventListener('resize', resize);
-
-      const vertexShaderSource = `
-        attribute vec2 a_position;
-        void main() {
-          gl_Position = vec4(a_position, 0.0, 1.0);
-        }
-      `;
-
-      const fragmentShaderSource = `
-        precision highp float;
-        uniform vec2 u_resolution;
-        uniform float u_time;
-
-        float hash(vec2 p) {
-          return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
-        }
-
-        float noise(vec2 p) {
-          vec2 i = floor(p);
-          vec2 f = fract(p);
-          f = f * f * (3.0 - 2.0 * f);
-          float a = hash(i);
-          float b = hash(i + vec2(1.0, 0.0));
-          float c = hash(i + vec2(0.0, 1.0));
-          float d = hash(i + vec2(1.0, 1.0));
-          return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
-        }
-
-        float fbm(vec2 p) {
-          float value = 0.0;
-          float amp = 0.5;
-          float freq = 1.0;
-          for (int i = 0; i < 4; i++) {
-            value += amp * noise(p * freq);
-            amp *= 0.5;
-            freq *= 2.0;
-          }
-          return value;
-        }
-
-        void main() {
-          vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-          vec2 p = uv;
-          p.x *= u_resolution.x / u_resolution.y;
-
-          float time = u_time * 0.05;
-
-          vec2 q = p * 1.5;
-          float aurora = 0.0;
-          float n1 = fbm(q + vec2(time * 0.1, time * 0.05));
-          aurora += n1 * 0.6;
-          float n2 = fbm(q * 2.0 - vec2(time * 0.15, time * 0.1));
-          aurora += n2 * 0.4;
-          float n3 = fbm(q * 3.0 + vec2(time * 0.05, -time * 0.08));
-          aurora += n3 * 0.3;
-
-          vec3 color1 = vec3(0.1, 0.6, 1.0);
-          vec3 color2 = vec3(0.8, 0.3, 1.0);
-          vec3 color3 = vec3(0.0, 1.0, 0.6);
-          vec3 color4 = vec3(0.2, 0.8, 0.2);
-
-          float mixVal = aurora * 0.8 + 0.2 * (0.5 + 0.5 * sin(p.y * 3.0 + time));
-          vec3 color = mix(color1, color2, mixVal);
-          color = mix(color, color3, (0.5 + 0.5 * sin(p.x * 4.0 + time * 0.2)));
-          color = mix(color, color4, (0.5 + 0.5 * cos(p.y * 2.0 + time * 0.3)));
-
-          color *= 0.8 + 0.4 * aurora;
-
-          float vignette = 1.0 - length(uv - 0.5) * 0.8;
-          color *= vignette;
-
-          gl_FragColor = vec4(color, 1.0);
-        }
-      `;
-
-      function createShader(src, type) {
-        const s = gl.createShader(type);
-        gl.shaderSource(s, src);
-        gl.compileShader(s);
-        if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-          console.warn('Shader compile error:', gl.getShaderInfoLog(s));
-          return null;
-        }
-        return s;
-      }
-
-      const vertexShader = createShader(vertexShaderSource, gl.VERTEX_SHADER);
-      const fragmentShader = createShader(fragmentShaderSource, gl.FRAGMENT_SHADER);
-      if (!vertexShader || !fragmentShader) {
-        canvas.style.display = 'none';
-        return;
-      }
-
-      const program = gl.createProgram();
-      gl.attachShader(program, vertexShader);
-      gl.attachShader(program, fragmentShader);
-      gl.linkProgram(program);
-      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        console.warn('Program link error:', gl.getProgramInfoLog(program));
-        canvas.style.display = 'none';
-        return;
-      }
-
-      const positionLoc = gl.getAttribLocation(program, 'a_position');
-      const resolutionLoc = gl.getUniformLocation(program, 'u_resolution');
-      const timeLoc = gl.getUniformLocation(program, 'u_time');
-
-      const positions = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
-      const buffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-      gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-      gl.enableVertexAttribArray(positionLoc);
-      gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
-
-      gl.useProgram(program);
-
-      let startTime = performance.now();
-
-      function render() {
-        const now = performance.now();
-        const elapsed = (now - startTime) / 1000;
-
-        gl.uniform2f(resolutionLoc, canvas.width, canvas.height);
-        gl.uniform1f(timeLoc, elapsed);
-
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-        requestAnimationFrame(render);
-      }
-
-      resize();
-      render();
-    })();
-  </script>
+initCarousel();
+fetchLanyard();
+setInterval(fetchLanyard, 15000);
+</script>
 </body>
 </html>
