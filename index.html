@@ -21,7 +21,7 @@
     background:var(--bg);
     color:var(--ink);
     font-family:'Space Grotesk',sans-serif;
-    overflow-x:hidden;
+    overflow:hidden;
   }
   #flow{
     position:fixed;
@@ -124,15 +124,16 @@
     background:transparent;
   }
   main{
-    position:relative;
+    position:fixed;
+    inset:0;
     z-index:2;
-    min-height:100vh;
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
     padding:40px 20px 28px;
     text-align:center;
+    overflow:hidden;
   }
   .avatar-wrap{
     position:relative;
