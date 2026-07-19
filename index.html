@@ -1,358 +1,875 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>profile</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#050509;
-    --ink:#e9e9f2;
-    --dim:#8a8a9c;
-    --accent-blue:#4f7fe0;
-    --accent-amber:#e0a458;
-  }
-  *{box-sizing:border-box;}
-  html,body{
-    margin:0;
-    height:100%;
-    background:var(--bg);
-    color:var(--ink);
-    font-family:'Space Grotesk',sans-serif;
-    overflow:hidden;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nyx · Developer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0a;
+      color: #f0f0f0;
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
 
-  /* ================= GLASS BLUR LOADER ================= */
-  #loader{
-    position:fixed;
-    inset:0;
-    z-index:50;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    transition:opacity .6s ease, visibility .6s ease;
-    overflow:hidden;
-    background:
-      radial-gradient(ellipse 70% 55% at 30% 20%, rgba(120,150,255,0.35), transparent 60%),
-      radial-gradient(ellipse 65% 50% at 80% 30%, rgba(80,110,230,0.30), transparent 60%),
-      radial-gradient(ellipse 75% 55% at 50% 85%, rgba(140,170,255,0.25), transparent 60%),
-      linear-gradient(160deg,#0a0e1e,#03040a 70%);
-  }
-  #loader.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
-  #loader::before, #loader::after{
-    content:'';
-    position:absolute;
-    border-radius:50%;
-    filter:blur(60px);
-  }
-  #loader::before{
-    width:60vmax; height:60vmax;
-    top:-15vmax; left:-15vmax;
-    background:radial-gradient(circle, rgba(120,160,255,0.35), transparent 70%);
-    animation: blob1 14s ease-in-out infinite alternate;
-  }
-  #loader::after{
-    width:55vmax; height:55vmax;
-    bottom:-18vmax; right:-12vmax;
-    background:radial-gradient(circle, rgba(70,100,220,0.35), transparent 70%);
-    animation: blob2 17s ease-in-out infinite alternate;
-  }
-  @keyframes blob1{ to{ transform:translate(6vmax,8vmax) scale(1.15); } }
-  @keyframes blob2{ to{ transform:translate(-6vmax,-6vmax) scale(1.2); } }
+    #aurora-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      display: block;
+      pointer-events: none;
+    }
 
-  .glass-panel{
-    position:relative;
-    z-index:2;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:16px;
-    padding:46px 52px;
-    border-radius:28px;
-    background:rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.22);
-    backdrop-filter:blur(40px) saturate(160%);
-    -webkit-backdrop-filter:blur(40px) saturate(160%);
-    box-shadow:
-      0 8px 40px rgba(0,0,0,0.45),
-      inset 0 1px 0 rgba(255,255,255,0.25),
-      inset 0 0 60px rgba(120,150,255,0.08);
-    opacity:0;
-    animation:panelIn 0.8s cubic-bezier(.2,.8,.2,1) 0.1s forwards;
-  }
-  @keyframes panelIn{
-    from{ opacity:0; transform:translateY(10px) scale(0.97); }
-    to{ opacity:1; transform:translateY(0) scale(1); }
-  }
-  .glass-ring{
-    width:52px;
-    height:52px;
-    border-radius:50%;
-    background:rgba(255,255,255,0.08);
-    border:1px solid rgba(255,255,255,0.3);
-    backdrop-filter:blur(10px);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-  .glass-ring svg{ width:22px; height:22px; stroke:#eaf1ff; fill:none; stroke-width:1.6; }
-  .glass-title{
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.78rem;
-    letter-spacing:3px;
-    text-transform:uppercase;
-    color:rgba(230,238,255,0.85);
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-  .glass-title span.dot{
-    width:5px; height:5px; border-radius:50%;
-    background:var(--accent-blue);
-    box-shadow:0 0 10px rgba(120,160,255,0.9);
-    animation:pulseDot 1.4s ease-in-out infinite;
-  }
-  @keyframes pulseDot{ 0%,100%{opacity:0.25;} 50%{opacity:1;} }
-  /* ======================================================= */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(10, 10, 10, 0.5);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 0.8rem 0;
+    }
+    nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .nav-brand span {
+      font-weight: 700;
+      font-size: 1.2rem;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #fff, #888);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .nav-links a {
+      opacity: 0.6;
+      transition: opacity 0.2s, color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .nav-links a:hover { opacity: 1; color: #fff; }
+    .nav-cta {
+      background: #fff;
+      color: #000 !important;
+      padding: 0.4rem 1.4rem;
+      border-radius: 40px;
+      opacity: 1 !important;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: none;
+    }
+    .nav-cta:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(255,255,255,0.1); }
 
-  /* ================= MAIN PAGE (video + card) ================= */
-  main{
-    position:fixed;
-    inset:0;
-    z-index:2;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    padding:40px 20px 28px;
-    text-align:center;
-    overflow:hidden;
-    background:#000;
-  }
-  #bgVideo{
-    position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    z-index:0;
-  }
-  main::after{
-    content:'';
-    position:fixed;
-    inset:0;
-    z-index:1;
-    pointer-events:none;
-    background:radial-gradient(ellipse 85% 65% at 50% 45%, transparent 30%, rgba(0,0,0,0.7) 100%);
-  }
-  .avatar-wrap{
-    position:relative;
-    z-index:2;
-    width:108px;
-    height:108px;
-    margin-bottom:16px;
-  }
-  .avatar{
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    background:linear-gradient(160deg,#23233a,#0c0c16);
-    border:2px solid rgba(255,255,255,0.14);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 0 30px rgba(90,110,220,0.28);
-    overflow:hidden;
-  }
-  .avatar svg{ width:44px; height:44px; stroke:var(--dim); }
-  .avatar img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
-  .status-dot{
-    position:absolute;
-    right:4px;
-    bottom:4px;
-    width:18px;
-    height:18px;
-    border-radius:50%;
-    background:var(--accent-blue);
-    border:3px solid var(--bg);
-    box-shadow:0 0 8px rgba(79,127,224,0.8);
-  }
-  .name{
-    position:relative;
-    z-index:2;
-    font-size:1.8rem;
-    font-weight:700;
-    letter-spacing:0.5px;
-    margin:0 0 10px;
-  }
-  .status-line{
-    position:relative;
-    z-index:2;
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.9rem;
-    color:var(--dim);
-    margin-bottom:26px;
-    display:flex;
-    align-items:center;
-    gap:2px;
-  }
-  .caret{
-    display:inline-block;
-    width:2px;
-    height:1.1em;
-    background:var(--accent-amber);
-    margin-left:4px;
-    animation:blink 1s steps(1) infinite;
-  }
-  @keyframes blink{ 50%{ opacity:0; } }
-  .social-row{
-    position:relative;
-    z-index:2;
-    display:flex;
-    align-items:center;
-    gap:18px;
-    margin-bottom:10px;
-  }
-  .social-link{
-    width:34px;
-    height:34px;
-    border-radius:10px;
-    background:rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.14);
-    backdrop-filter:blur(4px);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    text-decoration:none;
-    position:relative;
-    transition:background .2s ease, transform .15s ease;
-  }
-  .social-link:hover{ background:rgba(255,255,255,0.12); transform:translateY(-2px); }
-  .social-link svg{ width:18px; height:18px; }
-  #yt{
-    position:fixed;
-    width:1px;
-    height:1px;
-    opacity:0;
-    pointer-events:none;
-  }
-  @media (max-width:400px){
-    .name{ font-size:1.6rem; }
-    .avatar-wrap{ width:92px; height:92px; }
-  }
-</style>
+    .section {
+      padding: 6rem 0;
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      background: rgba(10, 10, 10, 0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border-bottom: 1px solid rgba(255,255,255,0.02);
+    }
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .section:last-of-type { border-bottom: none; }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6rem 1rem 4rem;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeIn 1.2s ease forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+    }
+
+    .avatar-3d {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 100px rgba(255,255,255,0.02);
+      overflow: hidden;
+      transition: transform 0.4s, box-shadow 0.4s;
+      position: relative;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .avatar-3d::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.03), transparent, rgba(255,255,255,0.03), transparent);
+      animation: spinGlow 8s linear infinite;
+      z-index: 0;
+    }
+    .avatar-3d::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      border-radius: 50%;
+      background: #111;
+      z-index: 1;
+    }
+    .avatar-3d img {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .avatar-3d:hover {
+      transform: scale(1.04) rotate(-2deg);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 120px rgba(255,255,255,0.05);
+    }
+
+    @keyframes spinGlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .hero h1 {
+      font-size: 5rem;
+      font-weight: 800;
+      letter-spacing: -3px;
+      line-height: 1;
+      margin-bottom: 0.2rem;
+      text-shadow: 0 0 60px rgba(0,0,0,0.8);
+      background: linear-gradient(135deg, #ffffff, #888888, #ffffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmerText 6s ease-in-out infinite;
+    }
+    @keyframes shimmerText {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    .hero .subtitle {
+      font-size: 1.3rem;
+      color: #aaa;
+      font-weight: 300;
+      margin-bottom: 0.2rem;
+      letter-spacing: 2px;
+      text-shadow: 0 0 40px rgba(0,0,0,0.9);
+    }
+    .hero .tagline {
+      font-size: 1.1rem;
+      color: #666;
+      font-weight: 300;
+      font-style: italic;
+      margin-bottom: 2rem;
+      letter-spacing: 1px;
+    }
+    .hero .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 0.3rem 1.2rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 400;
+      border: 1px solid rgba(255,255,255,0.04);
+      margin-bottom: 2rem;
+      color: #888;
+      letter-spacing: 1px;
+    }
+    .badge svg { display: inline; vertical-align: middle; margin-right: 6px; }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.8rem 2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.25s;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: #fff;
+      color: #0a0a0a;
+      border: none;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 12px 40px rgba(255,255,255,0.08);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.1);
+      color: #fff;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.08);
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.2);
+    }
+    .btn-outline {
+      border-color: rgba(255,255,255,0.08);
+      color: #fff;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .btn-outline:hover {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+    }
+    .btn svg { flex-shrink: 0; }
+
+    .section-title {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      background: linear-gradient(135deg, #fff, #888);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .section-title svg { display: inline; vertical-align: middle; margin-right: 12px; }
+    .section-sub {
+      color: #888;
+      font-size: 1.05rem;
+      margin-bottom: 2.5rem;
+      text-align: center;
+      font-weight: 300;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .about-text p {
+      font-size: 1.1rem;
+      color: #ccc;
+      margin-bottom: 1.2rem;
+      line-height: 1.8;
+    }
+    .about-text .highlight { color: #fff; font-weight: 600; }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .skill-card {
+      text-align: center;
+      background: rgba(255,255,255,0.02);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 1.8rem 1rem;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.03);
+      transition: all 0.3s;
+    }
+    .skill-card:hover {
+      background: rgba(255,255,255,0.04);
+      transform: translateY(-4px);
+      border-color: rgba(255,255,255,0.06);
+    }
+    .skill-card .skill-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .skill-card .skill-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #ddd;
+    }
+
+    .dev-card {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      background: rgba(255,255,255,0.02);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 24px;
+      padding: 2rem 2.5rem;
+      border: 1px solid rgba(255,255,255,0.03);
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .dev-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.06);
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dev-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .dev-info h3 { font-size: 1.3rem; font-weight: 600; }
+    .dev-info .dev-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #888;
+      font-size: 0.9rem;
+    }
+    .dev-info .dev-status .status-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #555;
+    }
+    .dev-info .dev-status .status-dot.online { background: #3ba55d; }
+    .dev-info .dev-status .status-dot.idle { background: #faa81a; }
+    .dev-info .dev-status .status-dot.dnd { background: #ed4245; }
+    .dev-info .dev-status .status-dot.offline { background: #747f8d; }
+
+    .footer {
+      padding: 2rem 0;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(255,255,255,0.02);
+      color: #666;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 0 1.2rem; }
+      .hero h1 { font-size: 3.2rem; }
+      .avatar-3d { width: 110px; height: 110px; }
+      .nav-links li:not(.nav-cta) { display: none; }
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .skills-grid { grid-template-columns: 1fr 1fr; }
+      .dev-card { flex-direction: column; text-align: center; padding: 1.5rem; }
+    }
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 2.4rem; }
+      .avatar-3d { width: 90px; height: 90px; }
+      .skills-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
 </head>
 <body>
 
-<div id="loader">
-  <div class="glass-panel">
-    <div class="glass-ring">
-      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 20c0-3.6 3.6-6 8-6s8 2.4 8 6"/></svg>
+  <canvas id="aurora-canvas"></canvas>
+
+  <nav>
+    <div class="container">
+      <div class="nav-brand">
+        <span>nyx</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#contact" class="nav-cta">Contact</a></li>
+      </ul>
     </div>
-    <div class="glass-title"><span class="dot"></span>click to enter</div>
-  </div>
-</div>
+  </nav>
 
-<main>
-  <video id="bgVideo" muted playsinline autoplay preload="auto" loop src="https://files.catbox.moe/lv3hfn.mp4"></video>
-
-  <div class="avatar-wrap">
-    <div class="avatar" id="avatar">
-      <svg viewBox="0 0 24 24" fill="none"><path stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 20c0-3.6 3.6-6 8-6s8 2.4 8 6"/></svg>
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <div class="avatar-3d" id="heroAvatar">
+        <img src="https://cdn.discordapp.com/avatars/1418597263479144471/a_ae7375f15a881780a6e17df90ab4b8eb.gif?size=256" alt="nyx" />
+      </div>
+      <h1>nyx</h1>
+      <p class="subtitle">Fullstack Developer</p>
+      <p class="tagline">"Make it · Don't dream it"</p>
+      <div class="badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        Available for work
+      </div>
+      <div class="hero-buttons">
+        <a href="#contact" class="btn btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          Get in touch
+        </a>
+        <a href="#skills" class="btn btn-outline">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/><path d="M14 2v6h6"/><path d="M12 18v-4"/><path d="M12 9v.01"/></svg>
+          View Skills
+        </a>
+      </div>
     </div>
-    <div class="status-dot"></div>
-  </div>
+  </section>
 
-  <h1 class="name" id="displayName">&nbsp;</h1>
+  <section class="section" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text">
+          <h2 class="section-title" style="text-align:left;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            About Me
+          </h2>
+          <p>
+            I'm <span class="highlight">nyx</span>, a fullstack developer who turns ideas into reality.
+            I work across the stack — from <span class="highlight">Python</span> and <span class="highlight">Rust</span>
+            backends to <span class="highlight">React</span> and <span class="highlight">CSS</span> frontends.
+          </p>
+          <p>
+            I believe in <span class="highlight">building</span> over talking. Whether it's a Discord bot,
+            a web app, or a full-scale platform — I make it happen.
+          </p>
+          <p style="color:#666;font-style:italic;font-size:0.95rem;">
+            "Make it · Don't dream it"
+          </p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1rem;align-items:center;">
+          <div class="dev-card" style="max-width:100%;width:100%;">
+            <div class="dev-avatar" id="devAvatar">
+              <img src="https://cdn.discordapp.com/avatars/1418597263479144471/a_ae7375f15a881780a6e17df90ab4b8eb.gif?size=128" alt="nyx" />
+            </div>
+            <div class="dev-info" style="text-align:center;">
+              <h3 id="devName">nyx</h3>
+              <div class="dev-status">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="devStatusText">Connecting...</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:1.2rem;margin-top:0.5rem;flex-wrap:wrap;justify-content:center;">
+            <a href="https://discord.com/users/1418597263479144471" target="_blank" style="color:#888;transition:color 0.2s;display:flex;align-items:center;gap:6px;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 9a4 4 0 01-4 4 4 4 0 01-4-4 4 4 0 014-4 4 4 0 014 4z"/><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Discord
+            </a>
+            <a href="https://github.com" target="_blank" style="color:#888;transition:color 0.2s;display:flex;align-items:center;gap:6px;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <div class="status-line">yo<span class="caret"></span></div>
+  <section class="section" id="skills">
+    <div class="container">
+      <h2 class="section-title">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Skills & Tech
+      </h2>
+      <p class="section-sub">Technologies I work with</p>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-icon" style="color:#f7df1e;">JS</div>
+          <div class="skill-name">JavaScript</div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon" style="color:#3178c6;">TS</div>
+          <div class="skill-name">TypeScript</div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon" style="color:#3776ab;">PY</div>
+          <div class="skill-name">Python</div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon" style="color:#61dafb;">⚛</div>
+          <div class="skill-name">React</div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon" style="color:#339933;">⬡</div>
+          <div class="skill-name">Node.js</div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon" style="color:#2965f1;">◧</div>
+          <div class="skill-name">CSS</div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon" style="color:#dea584;">🦀</div>
+          <div class="skill-name">Rust</div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon" style="color:#5865f2;">◈</div>
+          <div class="skill-name">discord.js</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <div class="social-row">
-    <a class="social-link" href="https://discord.com/users/1418597263479144471" target="_blank" rel="noopener" title="Discord">
-      <svg viewBox="0 0 127.14 96.36"><path fill="#5865F2" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
-    </a>
-    <a class="social-link" href="https://vt.tiktok.com/ZSCWdoVUH/" target="_blank" rel="noopener" title="TikTok">
-      <svg viewBox="0 0 48 48">
-        <path fill="#25F4EE" d="M33.5 12.9c-2.6-1.7-4.3-4.6-4.6-7.9h-5.8v27.1c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6c.6 0 1.1.1 1.7.3v-5.9c-.6-.1-1.1-.1-1.7-.1-6.6 0-12 5.4-12 12s5.4 12 12 12 12-5.4 12-12V18.4c2.5 1.8 5.6 2.9 8.9 2.9v-5.8c-1.6 0-3.1-.4-4.5-1.2z" transform="translate(-1,-1)"/>
-        <path fill="#FE2C55" d="M33.5 12.9c-2.6-1.7-4.3-4.6-4.6-7.9h-5.8v27.1c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6c.6 0 1.1.1 1.7.3v-5.9c-.6-.1-1.1-.1-1.7-.1-6.6 0-12 5.4-12 12s5.4 12 12 12 12-5.4 12-12V18.4c2.5 1.8 5.6 2.9 8.9 2.9v-5.8c-1.6 0-3.1-.4-4.5-1.2z" transform="translate(1,1)"/>
-        <path fill="#000000" d="M33.5 12.9c-2.6-1.7-4.3-4.6-4.6-7.9h-5.8v27.1c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6c.6 0 1.1.1 1.7.3v-5.9c-.6-.1-1.1-.1-1.7-.1-6.6 0-12 5.4-12 12s5.4 12 12 12 12-5.4 12-12V18.4c2.5 1.8 5.6 2.9 8.9 2.9v-5.8c-1.6 0-3.1-.4-4.5-1.2z"/>
-      </svg>
-    </a>
-  </div>
-</main>
+  <section class="section" id="contact" style="background:rgba(10,10,10,0.1);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);">
+    <div class="container">
+      <div style="text-align:center;background:rgba(255,255,255,0.02);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:32px;padding:3rem 2rem;border:1px solid rgba(255,255,255,0.03);">
+        <h2 style="font-size:2rem;font-weight:700;background:linear-gradient(135deg,#fff,#888);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:10px;"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          Let's build something
+        </h2>
+        <p style="color:#888;margin:1rem auto 2rem auto;max-width:500px;">
+          Reach out on Discord — I'm always down to collaborate or chat about tech.
+        </p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+          <a href="https://discord.com/users/1418597263479144471" target="_blank" class="btn btn-primary" style="font-size:1.1rem;padding:1rem 2.5rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:6px;"><path d="M17 9a4 4 0 01-4 4 4 4 0 01-4-4 4 4 0 014-4 4 4 0 014 4z"/><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Discord
+          </a>
+          <a href="https://github.com" target="_blank" class="btn btn-secondary" style="font-size:1.1rem;padding:1rem 2.5rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:6px;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+            GitHub
+          </a>
+        </div>
+        <p style="color:#555;margin-top:1.5rem;font-size:0.85rem;">nyx · Fullstack Developer</p>
+      </div>
+    </div>
+  </section>
 
-<div id="yt"></div>
+  <footer class="footer">
+    <div class="container">
+      <p>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        &copy; 2026 nyx · <span style="color:#666;">deathy:3</span>
+      </p>
+    </div>
+  </footer>
 
-<script>
-const DISCORD_ID = "1418597263479144471";
-async function loadLanyardProfile(){
-  try{
-    const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
-    const json = await res.json();
-    if(json.success){
-      const u = json.data.discord_user;
-      const ext = u.avatar && u.avatar.startsWith('a_') ? 'gif' : 'png';
-      const url = u.avatar
-        ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.${ext}?size=256`
-        : `https://cdn.discordapp.com/embed/avatars/0.png`;
-      const img = new Image();
-      img.src = url;
-      img.alt = "";
-      img.onload = ()=>{
-        document.getElementById('avatar').innerHTML = '';
-        document.getElementById('avatar').appendChild(img);
-      };
-      const name = u.global_name || u.username || "";
-      document.getElementById('displayName').textContent = name;
-    }
-  }catch(e){}
-}
-
-let player, playerReady=false, musicStarted=false, wantsPlay=false;
-const tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-document.body.appendChild(tag);
-
-function onYouTubeIframeAPIReady(){
-  player = new YT.Player('yt', {
-    height:'1', width:'1', videoId:'3SPbIo1ZTu4',
-    playerVars:{ autoplay:0, controls:0, loop:1, playlist:'3SPbIo1ZTu4' },
-    events:{
-      onReady:()=>{
-        playerReady = true;
-        if(wantsPlay && !musicStarted){
-          player.playVideo();
-          musicStarted = true;
+  <script>
+    const sections = document.querySelectorAll('.section');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
         }
+      });
+    }, { threshold: 0.15 });
+    sections.forEach(s => observer.observe(s));
+
+    const USER_ID = '1418597263479144471';
+    const WS_URL = 'wss://api.lanyard.rest/socket';
+
+    let socket = null;
+    let reconnectAttempts = 0;
+    const MAX_RECONNECT_ATTEMPTS = 5;
+
+    function connectWebSocket() {
+      if (socket && socket.readyState === WebSocket.OPEN) return;
+      try {
+        socket = new WebSocket(WS_URL);
+      } catch (e) {
+        console.warn('WebSocket failed:', e);
+        return;
       }
+
+      socket.onopen = () => {
+        reconnectAttempts = 0;
+        socket.send(JSON.stringify({
+          op: 2,
+          d: {
+            subscribe_to_id: USER_ID
+          }
+        }));
+      };
+
+      socket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.op === 0 && data.d) {
+            updateUI(data.d);
+          }
+          if (data.op === 1 && data.d?.heartbeat_interval) {
+            setInterval(() => {
+              if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ op: 3 }));
+              }
+            }, data.d.heartbeat_interval);
+          }
+        } catch (err) {
+          console.warn('WebSocket message error:', err);
+        }
+      };
+
+      socket.onclose = () => {
+        if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+          reconnectAttempts++;
+          setTimeout(connectWebSocket, 3000 * reconnectAttempts);
+        }
+      };
+
+      socket.onerror = (err) => {
+        console.warn('WebSocket error:', err);
+        socket.close();
+      };
     }
-  });
-}
 
-/* ---------- GLASS GATE: tap to enter ---------- */
-const loaderEl = document.getElementById('loader');
-let handedOff = false;
+    function updateUI(data) {
+      const name = data.discord_user.global_name || data.discord_user.username;
+      document.getElementById('devName').textContent = name;
 
-function handoff(){
-  if(handedOff) return;
-  handedOff = true;
-  loaderEl.classList.add('hidden');
-  wantsPlay = true;
-  if(playerReady && !musicStarted){
-    player.playVideo();
-    musicStarted = true;
-  }
-}
+      const status = data.discord_status || 'offline';
+      const dot = document.getElementById('statusDot');
+      dot.className = `status-dot ${status}`;
+      const statusMap = { online: 'Online', idle: 'Idle', dnd: 'Do Not Disturb', offline: 'Offline' };
+      document.getElementById('devStatusText').textContent = statusMap[status] || 'Offline';
+    }
 
-loaderEl.addEventListener('click', handoff);
+    connectWebSocket();
 
-window.addEventListener('load', ()=>{
-  loadLanyardProfile();
-});
-</script>
+    (function initAurora() {
+      const canvas = document.getElementById('aurora-canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (!gl) {
+        canvas.style.display = 'none';
+        return;
+      }
+
+      function resize() {
+        const w = window.innerWidth, h = window.innerHeight;
+        canvas.width = w;
+        canvas.height = h;
+        gl.viewport(0, 0, w, h);
+      }
+      window.addEventListener('resize', resize);
+
+      const vertexShaderSource = `
+        attribute vec2 a_position;
+        void main() {
+          gl_Position = vec4(a_position, 0.0, 1.0);
+        }
+      `;
+
+      const fragmentShaderSource = `
+        precision highp float;
+        uniform vec2 u_resolution;
+        uniform float u_time;
+
+        float hash(vec2 p) {
+          return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+        }
+
+        float smoothNoise(vec2 p) {
+          vec2 i = floor(p);
+          vec2 f = fract(p);
+          f = f * f * (3.0 - 2.0 * f);
+          float a = hash(i);
+          float b = hash(i + vec2(1.0, 0.0));
+          float c = hash(i + vec2(0.0, 1.0));
+          float d = hash(i + vec2(1.0, 1.0));
+          return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+        }
+
+        float fbm(vec2 p) {
+          float value = 0.0;
+          float amp = 0.5;
+          float freq = 1.0;
+          for (int i = 0; i < 6; i++) {
+            value += amp * smoothNoise(p * freq);
+            amp *= 0.5;
+            freq *= 2.0;
+          }
+          return value;
+        }
+
+        void main() {
+          vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+          vec2 p = uv;
+          p.x *= u_resolution.x / u_resolution.y;
+
+          float time = u_time * 0.04;
+
+          vec2 flow = vec2(
+            fbm(vec2(p.x * 0.5, p.y * 0.5 + time * 0.1)),
+            fbm(vec2(p.x * 0.5 + 100.0, p.y * 0.5 + time * 0.12))
+          );
+          flow = (flow - 0.5) * 0.3;
+
+          vec2 p_distorted = p + flow;
+
+          vec2 q1 = p_distorted * vec2(1.2, 0.7) + vec2(time * 0.15, time * 0.08);
+          vec2 q2 = p_distorted * vec2(1.8, 0.6) + vec2(time * 0.25, -time * 0.05);
+          vec2 q3 = p_distorted * vec2(2.8, 0.5) + vec2(-time * 0.18, time * 0.07);
+          vec2 q4 = p_distorted * vec2(4.0, 0.4) + vec2(time * 0.35, time * 0.04);
+          vec2 q5 = p_distorted * vec2(6.0, 0.3) + vec2(time * 0.45, -time * 0.03);
+
+          float n1 = fbm(q1);
+          float n2 = fbm(q2);
+          float n3 = fbm(q3);
+          float n4 = fbm(q4);
+          float n5 = smoothNoise(q5);
+
+          float heightGradient = exp(-uv.y * 2.2) * 0.95 + 0.05;
+
+          float aurora = (n1 * 0.35 + n2 * 0.25 + n3 * 0.18 + n4 * 0.12 + n5 * 0.10) * heightGradient;
+
+          float bands = 0.5 + 0.5 * sin(p.x * 6.0 + p.y * 2.0 + time * 0.15);
+          float bands2 = 0.5 + 0.5 * sin(p.x * 9.0 - p.y * 2.5 + time * 0.25);
+          float bands3 = 0.6 + 0.4 * sin(p.x * 13.0 + p.y * 3.0 + time * 0.35);
+          float bands4 = 0.7 + 0.3 * sin(p.x * 18.0 - p.y * 4.0 + time * 0.45);
+
+          aurora *= (bands * 0.4 + bands2 * 0.3 + bands3 * 0.2 + bands4 * 0.1);
+
+          float rays = 0.7 + 0.3 * sin(p.x * 25.0 + p.y * 10.0 + time * 0.6);
+          aurora *= rays;
+
+          aurora = pow(aurora, 0.85) * 1.15;
+
+          float brightness = aurora * 0.9 + 0.1;
+          float contrast = 1.2;
+          brightness = pow(brightness, contrast);
+          brightness = clamp(brightness, 0.0, 1.0);
+
+          vec3 color = vec3(brightness * 0.95, brightness * 0.9, brightness);
+
+          float stars = 0.0;
+          vec2 starPos = p * 300.0;
+          vec2 starGrid = floor(starPos);
+          vec2 starFract = fract(starPos);
+          float starBright = hash(starGrid);
+          if (starBright > 0.985) {
+            float dist = length(starFract - 0.5);
+            if (dist < 0.015) {
+              stars = (1.0 - dist / 0.015) * 0.4;
+            }
+          }
+          stars *= (1.0 - uv.y * 1.3);
+          color += vec3(0.8, 0.85, 1.0) * stars;
+
+          float vignette = 1.0 - length(uv - 0.5) * 0.55;
+          color *= vignette;
+          color += 0.01;
+
+          gl_FragColor = vec4(color, 1.0);
+        }
+      `;
+
+      function createShader(src, type) {
+        const s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+          console.warn('Shader error:', gl.getShaderInfoLog(s));
+          return null;
+        }
+        return s;
+      }
+
+      const vertexShader = createShader(vertexShaderSource, gl.VERTEX_SHADER);
+      const fragmentShader = createShader(fragmentShaderSource, gl.FRAGMENT_SHADER);
+      if (!vertexShader || !fragmentShader) {
+        canvas.style.display = 'none';
+        return;
+      }
+
+      const program = gl.createProgram();
+      gl.attachShader(program, vertexShader);
+      gl.attachShader(program, fragmentShader);
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.warn('Program link error:', gl.getProgramInfoLog(program));
+        canvas.style.display = 'none';
+        return;
+      }
+
+      const positionLoc = gl.getAttribLocation(program, 'a_position');
+      const resolutionLoc = gl.getUniformLocation(program, 'u_resolution');
+      const timeLoc = gl.getUniformLocation(program, 'u_time');
+
+      const positions = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+      gl.enableVertexAttribArray(positionLoc);
+      gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
+
+      gl.useProgram(program);
+
+      let startTime = performance.now();
+      function render() {
+        const now = performance.now();
+        const elapsed = (now - startTime) / 1000;
+        gl.uniform2f(resolutionLoc, canvas.width, canvas.height);
+        gl.uniform1f(timeLoc, elapsed);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        requestAnimationFrame(render);
+      }
+
+      resize();
+      render();
+    })();
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href === '#') return;
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
 </body>
 </html>
